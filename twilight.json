@@ -1,0 +1,14 @@
+{
+  "name": "shadan",
+  "description": "Premium jewelry theme inspired by Luluoro quiet luxury aesthetics",
+  "version": "1.0.0",
+  "author": "Shadan Design Studio",
+  "license": "MIT",
+  "type": "theme",
+  "keywords": ["jewelry", "luxury", "minimalist", "elegant", "premium", "gold", "arabic", "rtl"],
+  "settings": {
+    "primary_color": "#1A1A1A",
+    "accent_color": "#C9A962",
+    "background_color": "#F5F5F3"
+  }
+}
