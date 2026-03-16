@@ -1,14 +1,84 @@
 {
-  "name": "shadan",
-  "description": "Premium jewelry theme inspired by Luluoro quiet luxury aesthetics",
-  "version": "1.0.0",
-  "author": "Shadan Design Studio",
-  "license": "MIT",
-  "type": "theme",
-  "keywords": ["jewelry", "luxury", "minimalist", "elegant", "premium", "gold", "arabic", "rtl"],
-  "settings": {
-    "primary_color": "#1A1A1A",
-    "accent_color": "#C9A962",
-    "background_color": "#F5F5F3"
-  }
+    "name": {
+        "ar": "شذن",
+        "en": "Shadan"
+    },
+    "repository": "https://github.com/yaqoot4zain-del/shadantheme",
+    "author_email": "support@shadan.com",
+    "features": [
+        "fonts",
+        "color",
+        "breadcrumb",
+        "unite-cards-height",
+        "component-featured-products",
+        "component-fixed-banner",
+        "component-fixed-products",
+        "component-products-slider",
+        "component-photos-slider",
+        "component-testimonials",
+        "component-store-features",
+        "filters",
+        "cart-drawer",
+        "scroll-animations",
+        "image-zoom",
+        "rtl-support"
+    ],
+    "settings": [
+        {
+            "id": "primary_color",
+            "type": "color",
+            "format": "color-picker",
+            "label": "اللون الأساسي",
+            "description": "اللون الأساسي للثيم",
+            "value": "#1A1A1A"
+        },
+        {
+            "id": "accent_color",
+            "type": "color",
+            "format": "color-picker",
+            "label": "لون التمييز",
+            "description": "اللون الذهبي للتمييز",
+            "value": "#C9A962"
+        },
+        {
+            "id": "background_color",
+            "type": "color",
+            "format": "color-picker",
+            "label": "لون الخلفية",
+            "description": "لون خلفية المتجر",
+            "value": "#F5F5F3"
+        },
+        {
+            "id": "heading_font",
+            "type": "font",
+            "format": "dropdown-list",
+            "label": "خط العناوين",
+            "description": "خط العناوين الرئيسي",
+            "value": "Playfair Display"
+        },
+        {
+            "id": "body_font",
+            "type": "font",
+            "format": "dropdown-list",
+            "label": "خط النصوص",
+            "description": "خط النصوص الأساسي",
+            "value": "Inter"
+        },
+        {
+            "id": "enable_animations",
+            "type": "boolean",
+            "format": "checkbox",
+            "label": "تفعيل الحركات",
+            "description": "تفعيل حركات الـ scroll والتأثيرات",
+            "value": true
+        },
+        {
+            "id": "sticky_header",
+            "type": "boolean",
+            "format": "checkbox",
+            "label": "هيدر ثابت",
+            "description": "جعل الهيدر ثابتاً عند التمرير",
+            "value": true
+        }
+    ]
 }
