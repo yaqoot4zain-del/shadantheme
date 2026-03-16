@@ -1,0 +1,127 @@
+{# Shadan - Cart Drawer Partial #}
+<div class="cart-drawer" data-cart-drawer>
+    <div class="cart-drawer-overlay" data-cart-close></div>
+    
+    <div class="cart-drawer-content">
+        {# Cart Header #}
+        <div class="cart-drawer-header">
+            <h3 class="cart-drawer-title">سلة التسوق</h3>
+            <button class="cart-drawer-close" data-cart-close aria-label="Close cart">
+                <i class="icon-close"></i>
+            </button>
+        </div>
+        
+        {# Cart Items #}
+        <div class="cart-drawer-body" data-cart-items>
+            {% if cart.items|length > 0 %}
+                <div class="cart-items">
+                    {% for item in cart.items %}
+                        <div class="cart-item" data-cart-item="{{ item.id }}">
+                            <div class="cart-item-image">
+                                <img src="{{ item.product.image }}" alt="{{ item.product.name }}">
+                            </div>
+                            
+                            <div class="cart-item-details">
+                                <h4 class="cart-item-name">{{ item.product.name }}</h4>
+                                {% if item.variant %}
+                                    <p class="cart-item-variant">{{ item.variant.name }}</p>
+                                {% endif %}
+                                
+                                <div class="cart-item-price">
+                                    {% if item.compare_price > item.price %}
+                                        <span class="compare-price">{{ item.compare_price|money }}</span>
+                                    {% endif %}
+                                    <span class="price">{{ item.price|money }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="cart-item-actions">
+                                <div class="quantity-selector">
+                                    <button class="qty-btn qty-minus" data-qty-minus aria-label="Decrease quantity">-</button>
+                                    <input type="number" value="{{ item.quantity }}" min="1" class="qty-input" data-qty-input>
+                                    <button class="qty-btn qty-plus" data-qty-plus aria-label="Increase quantity">+</button>
+                                </div>
+                                
+                                <button class="cart-item-remove" data-remove-item aria-label="Remove item">
+                                    <i class="icon-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {# Empty Cart State #}
+                <div class="cart-empty">
+                    <div class="cart-empty-icon">
+                        <i class="icon-shopping-bag"></i>
+                    </div>
+                    <h4 class="cart-empty-title">سلة التسوق فارغة</h4>
+                    <p class="cart-empty-text">ابدأ التسوق واكتشف منتجاتنا المميزة</p>
+                    <a href="{{ link('products') }}" class="btn btn-primary">تسوق الآن</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        {# Cart Footer #}
+        {% if cart.items|length > 0 %}
+            <div class="cart-drawer-footer">
+                {# Free Shipping Progress #}
+                {% if store.free_shipping_threshold %}
+                    <div class="free-shipping-progress">
+                        {% set remaining = store.free_shipping_threshold - cart.subtotal %}
+                        {% set progress = (cart.subtotal / store.free_shipping_threshold) * 100 %}
+                        
+                        {% if remaining > 0 %}
+                            <p class="free-shipping-text">
+                                أضف {{ remaining|money }} للحصول على شحن مجاني
+                            </p>
+                        {% else %}
+                            <p class="free-shipping-text free-shipping-achieved">
+                                <i class="icon-check"></i> تهانينا! لديك شحن مجاني
+                            </p>
+                        {% endif %}
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ progress|min(100) }}%"></div>
+                        </div>
+                    </div>
+                {% endif %}
+                
+                {# Cart Summary #}
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>المجموع الفرعي</span>
+                        <span>{{ cart.subtotal|money }}</span>
+                    </div>
+                    
+                    {% if cart.discount > 0 %}
+                        <div class="summary-row discount">
+                            <span>الخصم</span>
+                            <span>-{{ cart.discount|money }}</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="summary-row">
+                        <span>الشحن</span>
+                        <span>{{ cart.shipping > 0 ? cart.shipping|money : 'مجاني' }}</span>
+                    </div>
+                    
+                    <div class="summary-row total">
+                        <span>الإجمالي</span>
+                        <span class="total-price">{{ cart.total|money }}</span>
+                    </div>
+                </div>
+                
+                {# Cart Actions #}
+                <div class="cart-actions">
+                    <a href="{{ link('checkout') }}" class="btn btn-primary btn-block btn-lg">
+                        إتمام الطلب
+                    </a>
+                    <a href="{{ link('cart') }}" class="btn btn-secondary btn-block">
+                        عرض السلة
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>

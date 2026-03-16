@@ -1,0 +1,69 @@
+{# Shadan - Master Layout #}
+<!DOCTYPE html>
+<html lang="{{ app.locale }}" dir="{{ app.direction }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    {# SEO Meta Tags #}
+    <title>{{ page.title|default(store.name) }}</title>
+    <meta name="description" content="{{ page.description|default(store.description) }}">
+    <meta name="keywords" content="{{ page.keywords|default('jewelry, luxury, gold, diamonds') }}">
+    
+    {# Open Graph #}
+    <meta property="og:title" content="{{ page.title|default(store.name) }}">
+    <meta property="og:description" content="{{ page.description|default(store.description) }}">
+    <meta property="og:image" content="{{ page.image|default(store.logo) }}">
+    <meta property="og:url" content="{{ app.url }}">
+    <meta property="og:type" content="website">
+    
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page.title|default(store.name) }}">
+    <meta name="twitter:description" content="{{ page.description|default(store.description) }}">
+    <meta name="twitter:image" content="{{ page.image|default(store.logo) }}">
+    
+    {# Favicon #}
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}">
+    
+    {# Google Fonts #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    {# Theme CSS #}
+    <link rel="stylesheet" href="{{ asset('css/theme.css') }}">
+    
+    {# Custom Head Content #}
+    {{ store.custom_head|raw }}
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="{{ app.direction }} {{ page.class|default('') }}">
+    {# Header #}
+    {% include 'partials/header.twig' %}
+    
+    {# Main Content #}
+    <main id="main-content" class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    
+    {# Footer #}
+    {% include 'partials/footer.twig' %}
+    
+    {# Cart Drawer #}
+    {% include 'partials/cart-drawer.twig' %}
+    
+    {# Notifications #}
+    <div id="notifications" class="notifications-container"></div>
+    
+    {# Theme JavaScript #}
+    <script src="{{ asset('js/theme.js') }}"></script>
+    
+    {# Custom Footer Scripts #}
+    {{ store.custom_footer|raw }}
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

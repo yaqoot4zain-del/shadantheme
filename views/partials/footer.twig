@@ -1,0 +1,118 @@
+{# Shadan - Footer Partial #}
+<footer class="site-footer">
+    <div class="footer-top">
+        <div class="container">
+            <div class="footer-grid">
+                {# Brand Column #}
+                <div class="footer-column footer-brand">
+                    <a href="{{ link('home') }}" class="footer-logo">
+                        {% if store.logo %}
+                            <img src="{{ store.logo }}" alt="{{ store.name }}" class="footer-logo-image">
+                        {% else %}
+                            <span class="footer-logo-text">{{ store.name }}</span>
+                        {% endif %}
+                    </a>
+                    <p class="footer-description">{{ store.description|default('متجر متخصص في المجوهرات الفاخرة والاكسسوارات الراقية') }}</p>
+                    
+                    {# Social Links #}
+                    <div class="footer-social">
+                        {% if store.social.instagram %}
+                            <a href="{{ store.social.instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+                                <i class="icon-instagram"></i>
+                            </a>
+                        {% endif %}
+                        {% if store.social.twitter %}
+                            <a href="{{ store.social.twitter }}" target="_blank" rel="noopener" aria-label="Twitter">
+                                <i class="icon-twitter"></i>
+                            </a>
+                        {% endif %}
+                        {% if store.social.facebook %}
+                            <a href="{{ store.social.facebook }}" target="_blank" rel="noopener" aria-label="Facebook">
+                                <i class="icon-facebook"></i>
+                            </a>
+                        {% endif %}
+                        {% if store.social.snapchat %}
+                            <a href="{{ store.social.snapchat }}" target="_blank" rel="noopener" aria-label="Snapchat">
+                                <i class="icon-snapchat"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {# Quick Links #}
+                <div class="footer-column">
+                    <h4 class="footer-title">روابط سريعة</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ link('products') }}">جميع المنتجات</a></li>
+                        <li><a href="{{ link('collections') }}">التشكيلات</a></li>
+                        <li><a href="{{ link('new-arrivals') }}">وصل حديثاً</a></li>
+                        <li><a href="{{ link('best-sellers') }}">الأكثر مبيعاً</a></li>
+                        <li><a href="{{ link('sale') }}">عروض خاصة</a></li>
+                    </ul>
+                </div>
+                
+                {# Customer Service #}
+                <div class="footer-column">
+                    <h4 class="footer-title">خدمة العملاء</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ link('about') }}">عن المتجر</a></li>
+                        <li><a href="{{ link('contact') }}">تواصل معنا</a></li>
+                        <li><a href="{{ link('shipping') }}">الشحن والتوصيل</a></li>
+                        <li><a href="{{ link('returns') }}">سياسة الإرجاع</a></li>
+                        <li><a href="{{ link('faq') }}">الأسئلة الشائعة</a></li>
+                    </ul>
+                </div>
+                
+                {# Newsletter #}
+                <div class="footer-column">
+                    <h4 class="footer-title">النشرة البريدية</h4>
+                    <p class="footer-text">اشترك ليصلك آخر العروض والتشكيلات الجديدة</p>
+                    <form class="footer-newsletter" action="{{ link('newsletter.subscribe') }}" method="post">
+                        <div class="newsletter-form">
+                            <input type="email" name="email" placeholder="بريدك الإلكتروني" required class="newsletter-input">
+                            <button type="submit" class="newsletter-btn" aria-label="Subscribe">
+                                <i class="icon-arrow-left"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    {# Contact Info #}
+                    <div class="footer-contact">
+                        {% if store.phone %}
+                            <div class="contact-item">
+                                <i class="icon-phone"></i>
+                                <a href="tel:{{ store.phone }}">{{ store.phone }}</a>
+                            </div>
+                        {% endif %}
+                        {% if store.email %}
+                            <div class="contact-item">
+                                <i class="icon-email"></i>
+                                <a href="mailto:{{ store.email }}">{{ store.email }}</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {# Footer Bottom #}
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="footer-bottom-content">
+                <p class="copyright">{{ store.copyright|default('© ' ~ "now"|date("Y") ~ ' ' ~ store.name ~ '. جميع الحقوق محفوظة.') }}</p>
+                
+                {# Payment Methods #}
+                <div class="payment-methods">
+                    <span class="payment-label">طرق الدفع:</span>
+                    <div class="payment-icons">
+                        <img src="{{ asset('images/payment/visa.svg') }}" alt="Visa" class="payment-icon">
+                        <img src="{{ asset('images/payment/mastercard.svg') }}" alt="Mastercard" class="payment-icon">
+                        <img src="{{ asset('images/payment/mada.svg') }}" alt="Mada" class="payment-icon">
+                        <img src="{{ asset('images/payment/apple-pay.svg') }}" alt="Apple Pay" class="payment-icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

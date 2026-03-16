@@ -1,0 +1,150 @@
+{# Shadan - Header Partial #}
+<header class="site-header {{ header.transparent ? 'header-transparent' : '' }}" data-header>
+    <div class="header-top">
+        <div class="container">
+            <div class="header-top-content">
+                <div class="header-contact">
+                    <span class="header-phone">
+                        <i class="icon-phone"></i>
+                        <a href="tel:{{ store.phone }}">{{ store.phone }}</a>
+                    </span>
+                </div>
+                
+                <div class="header-promo">
+                    <p>{{ store.promo_text|default('شحن مجاني للطلبات فوق 500 ريال') }}</p>
+                </div>
+                
+                <div class="header-actions">
+                    {% if user %}
+                        <a href="{{ link('account') }}" class="header-action">
+                            <i class="icon-user"></i>
+                            <span>{{ user.name }}</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ link('login') }}" class="header-action">
+                            <i class="icon-user"></i>
+                            <span>تسجيل الدخول</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="header-main" data-sticky-header>
+        <div class="container">
+            <div class="header-content">
+                {# Mobile Menu Toggle #}
+                <button class="mobile-menu-toggle" data-mobile-menu-toggle aria-label="Toggle menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+                
+                {# Logo #}
+                <div class="header-logo">
+                    <a href="{{ link('home') }}" class="logo-link">
+                        {% if store.logo %}
+                            <img src="{{ store.logo }}" alt="{{ store.name }}" class="logo-image">
+                        {% else %}
+                            <span class="logo-text">{{ store.name }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                {# Navigation #}
+                <nav class="header-nav" data-main-nav>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="{{ link('home') }}" class="nav-link {{ app.current_route == 'home' ? 'active' : '' }}">الرئيسية</a>
+                        </li>
+                        <li class="nav-item has-dropdown">
+                            <a href="{{ link('products') }}" class="nav-link {{ app.current_route == 'products' ? 'active' : '' }}">
+                                المنتجات
+                                <i class="icon-chevron-down"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% for category in categories|slice(0, 6) %}
+                                    <li>
+                                        <a href="{{ category.url }}">{{ category.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ link('collections') }}" class="nav-link {{ app.current_route == 'collections' ? 'active' : '' }}">التشكيلات</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ link('about') }}" class="nav-link {{ app.current_route == 'about' ? 'active' : '' }}">عن المتجر</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ link('contact') }}" class="nav-link {{ app.current_route == 'contact' ? 'active' : '' }}">تواصل معنا</a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                {# Header Tools #}
+                <div class="header-tools">
+                    {# Search #}
+                    <button class="header-tool" data-search-toggle aria-label="Search">
+                        <i class="icon-search"></i>
+                    </button>
+                    
+                    {# Wishlist #}
+                    <a href="{{ link('wishlist') }}" class="header-tool" aria-label="Wishlist">
+                        <i class="icon-heart"></i>
+                        {% if wishlist.count > 0 %}
+                            <span class="tool-badge">{{ wishlist.count }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    {# Cart #}
+                    <button class="header-tool" data-cart-toggle aria-label="Cart">
+                        <i class="icon-shopping-bag"></i>
+                        {% if cart.count > 0 %}
+                            <span class="tool-badge">{{ cart.count }}</span>
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {# Search Overlay #}
+    <div class="search-overlay" data-search-overlay>
+        <div class="search-container">
+            <button class="search-close" data-search-close aria-label="Close search">
+                <i class="icon-close"></i>
+            </button>
+            <form action="{{ link('search') }}" method="get" class="search-form">
+                <input type="search" name="q" placeholder="ابحث عن منتجات..." class="search-input" autocomplete="off">
+                <button type="submit" class="search-submit">
+                    <i class="icon-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    {# Mobile Menu #}
+    <div class="mobile-menu" data-mobile-menu>
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-title">القائمة</span>
+            <button class="mobile-menu-close" data-mobile-menu-close aria-label="Close menu">
+                <i class="icon-close"></i>
+            </button>
+        </div>
+        
+        <nav class="mobile-nav">
+            <ul class="mobile-nav-menu">
+                <li><a href="{{ link('home') }}">الرئيسية</a></li>
+                <li><a href="{{ link('products') }}">المنتجات</a></li>
+                <li><a href="{{ link('collections') }}">التشكيلات</a></li>
+                <li><a href="{{ link('about') }}">عن المتجر</a></li>
+                <li><a href="{{ link('contact') }}">تواصل معنا</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    {# Mobile Menu Overlay #}
+    <div class="mobile-menu-overlay" data-mobile-menu-overlay></div>
+</header>
