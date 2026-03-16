@@ -1,0 +1,534 @@
+{# Shadan - Premium Jewelry Theme #}
+{# Checkout Page Template #}
+
+{% extends 'layouts/master.twig' %}
+
+{% block title %}إتمام الطلب - {{ store.name }}{% endblock %}
+
+{% block meta %}
+<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block content %}
+
+<section class="checkout-section section-padding" data-section="checkout">
+    <div class="container">
+        <{# Page Header #}
+        <div class="page-header text-center">
+            <h1 class="page-title">إتمام الطلب</h1>
+            
+            <nav class="checkout-steps" aria-label="خطوات إتمام الطلب">
+                <ol class="steps-list">
+                    <li class="step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">معلومات الاتصال</span>
+                    </li>
+                    
+                    <li class="step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">الشحن</span>
+                    </li>
+                    
+                    <li class="step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">الدفع</span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <{# Checkout Layout #}
+        <div class="checkout-layout">
+            
+            {# Main Checkout Form #}
+            <div class="checkout-main">
+                
+                <form class="checkout-form" action="/checkout/process" method="POST" data-form="checkout">
+                    <{# Contact Information #}
+                    <div class="checkout-step-content active" data-step-content="1">
+                        <div class="form-section">
+                            <h2 class="section-title">معلومات الاتصال</h2>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">البريد الإلكتروني *</label>
+                                    
+                                    <input type="email" id="email" name="email" class="form-control" required 
+                                           value="{{ customer.email }}" 
+                                           placeholder="your@email.com">
+                                </div>
+                            </div>
+                            
+                            {% if not customer %}
+                            <div class="form-group form-checkbox">
+                                <label>
+                                    <input type="checkbox" name="create_account" value="1" checked>
+                                    <span>إنشاء حساب جديد للحصول على مزايا حصرية</span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-row" data-create-account-fields>
+                                <div class="form-group">
+                                    <label for="password">كلمة المرور *</label>
+                                    
+                                    <input type="password" id="password" name="password" class="form-control" 
+                                           placeholder="أدخل كلمة مرور قوية">
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary btn-lg" data-next-step>
+                                    متابعة
+                                    <i class="icon-arrow-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <{# Shipping Information #}
+                    <div class="checkout-step-content" data-step-content="2">
+                        <div class="form-section">
+                            <h2 class="section-title">عنوان الشحن</h2>
+                            
+                            <div class="form-row two-columns">
+                                <div class="form-group">
+                                    <label for="first_name">الاسم الأول *</label>
+                                    
+                                    <input type="text" id="first_name" name="shipping[first_name]" class="form-control" required
+                                           value="{{ customer.first_name }}" placeholder="محمد">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="last_name">الاسم الأخير *</label>
+                                    
+                                    <input type="text" id="last_name" name="shipping[last_name]" class="form-control" required
+                                           value="{{ customer.last_name }}" placeholder="الأحمد">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">رقم الجوال *</label>
+                                    
+                                    <div class="phone-input">
+                                        <span class="phone-prefix">+966</span>
+                                        
+                                        <input type="tel" id="phone" name="shipping[phone]" class="form-control" required
+                                               value="{{ customer.phone }}" placeholder="5xxxxxxxx">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="address">العنوان *</label>
+                                    
+                                    <input type="text" id="address" name="shipping[address]" class="form-control" required
+                                           placeholder="اسم الشارع، رقم المنزل/المبنى">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="address2">العنوان الإضافي (اختياري)</label>
+                                    
+                                    <input type="text" id="address2" name="shipping[address2]" class="form-control"
+                                           placeholder="رقم الشقة، الطابق، إلخ">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row two-columns">
+                                <div class="form-group">
+                                    <label for="country">الدولة *</label>
+                                    
+                                    <select id="country" name="shipping[country]" class="form-control" required>
+                                        <option value="SA" selected>المملكة العربية السعودية</option>
+                                        <option value="AE">الإمارات العربية المتحدة</option>
+                                        <option value="KW">الكويت</option>
+                                        <option value="BH">البحرين</option>
+                                        <option value="QA">قطر</option>
+                                        <option value="OM">عمان</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="city">المدينة *</label>
+                                    
+                                    <select id="city" name="shipping[city]" class="form-control" required>
+                                        <option value="">اختر المدينة</option>
+                                        <option value="riyadh">الرياض</option>
+                                        <option value="jeddah">جدة</option>
+                                        <option value="dammam">الدمام</option>
+                                        <option value="makkah">مكة المكرمة</option>
+                                        <option value="madinah">المدينة المنورة</option>
+                                        <option value="khobar">الخبر</option>
+                                        <option value="taif">الطائف</option>
+                                        <option value="tabuk">تبوك</option>
+                                        <option value="abha">أبها</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row two-columns">
+                                <div class="form-group">
+                                    <label for="district">الحي *</label>
+                                    
+                                    <input type="text" id="district" name="shipping[district]" class="form-control" required
+                                           placeholder="اسم الحي">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="postal_code">الرمز البريدي</label>
+                                    
+                                    <input type="text" id="postal_code" name="shipping[postal_code]" class="form-control"
+                                           placeholder="xxxxx">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group form-checkbox">
+                                <label>
+                                    <input type="checkbox" name="save_address" value="1" checked>
+                                    <span>حفظ العنوان لاستخدامه في المستقبل</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <{# Shipping Methods #}
+                        <div class="form-section">
+                            <h2 class="section-title">طريقة الشحن</h2>
+                            
+                            <div class="shipping-methods" data-shipping-methods>
+                                {% for method in shipping_methods %}
+                                <label class="shipping-method {{ loop.first ? 'selected' : '' }}">
+                                    <input type="radio" name="shipping_method" value="{{ method.id }}" 
+                                           {{ loop.first ? 'checked' : '' }} 
+                                           data-cost="{{ method.cost }}">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-header">
+                                            <span class="method-name">{{ method.name }}</span>
+                                            
+                                            <span class="method-cost">{{ method.cost > 0 ? method.cost|money : 'مجاني' }}</span>
+                                        </div>
+                                        
+                                        <div class="method-details">
+                                            <span class="method-time">{{ method.estimated_time }}</span>
+                                            
+                                            {% if method.description %}
+                                            <p>{{ method.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </label>
+                                {% else %}
+                                <label class="shipping-method selected">
+                                    <input type="radio" name="shipping_method" value="standard" checked data-cost="0">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-header">
+                                            <span class="method-name">الشحن القياسي</span>
+                                            
+                                            <span class="method-cost">مجاني</span>
+                                        </div>
+                                        
+                                        <div class="method-details">
+                                            <span class="method-time">2-5 أيام عمل</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="shipping-method">
+                                    <input type="radio" name="shipping_method" value="express" data-cost="50">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-header">
+                                            <span class="method-name">الشحن السريع</span>
+                                            
+                                            <span class="method-cost">{{ 50|money }}</span>
+                                        </div>
+                                        
+                                        <div class="method-details">
+                                            <span class="method-time">1-2 يوم عمل</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-text" data-prev-step>
+                                <i class="icon-arrow-right"></i>
+                                رجوع
+                            </button>
+                            
+                            <button type="button" class="btn btn-primary btn-lg" data-next-step>
+                                متابعة للدفع
+                                <i class="icon-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <{# Payment Information #}
+                    <div class="checkout-step-content" data-step-content="3">
+                        <{# Order Summary (Mobile) #}
+                        <div class="order-summary-mobile">
+                            <button type="button" class="summary-toggle" data-toggle="summary">
+                                <span>ملخص الطلب</span>
+                                
+                                <span class="summary-total">{{ cart.total|money }}</span>
+                                
+                                <i class="icon-chevron-down"></i>
+                            </button>
+                        </div>
+                        
+                        <{# Payment Methods #}
+                        <div class="form-section">
+                            <h2 class="section-title">طريقة الدفع</h2>
+                            
+                            <div class="payment-methods" data-payment-methods>
+                                {% for method in payment_methods %}
+                                <label class="payment-method {{ loop.first ? 'selected' : '' }}">
+                                    <input type="radio" name="payment_method" value="{{ method.id }}" 
+                                           {{ loop.first ? 'checked' : '' }}>
+                                    
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="icon-{{ method.icon }}"></i>
+                                        </div>
+                                        
+                                        <div class="method-info">
+                                            <span class="method-name">{{ method.name }}</span>
+                                            
+                                            {% if method.description %}
+                                            <p>{{ method.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </label>
+                                {% else %}
+                                <{# Default Payment Methods #}
+                                <label class="payment-method selected">
+                                    <input type="radio" name="payment_method" value="mada" checked>
+                                    
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="icon-mada"></i>
+                                        </div>
+                                        
+                                        <div class="method-info">
+                                            <span class="method-name">بطاقة مدى</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="payment-method">
+                                    <input type="radio" name="payment_method" value="credit_card">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="icon-credit-card"></i>
+                                        </div>
+                                        
+                                        <div class="method-info">
+                                            <span class="method-name">بطاقة ائتمانية</span>
+                                            
+                                            <span class="method-brands">Visa, Mastercard</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="payment-method">
+                                    <input type="radio" name="payment_method" value="apple_pay">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="icon-apple-pay"></i>
+                                        </div>
+                                        
+                                        <div class="method-info">
+                                            <span class="method-name">Apple Pay</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="payment-method">
+                                    <input type="radio" name="payment_method" value="cod">
+                                    
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="icon-cash"></i>
+                                        </div>
+                                        
+                                        <div class="method-info">
+                                            <span class="method-name">الدفع عند الاستلام</span>
+                                            
+                                            <p>رسوم إضافية {{ 20|money }}</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <{# Promo Code #}
+                        <div class="form-section promo-code-section">
+                            <h3>كود الخصم</h3>
+                            
+                            <div class="promo-code-input" data-promo-code>
+                                <input type="text" name="promo_code" class="form-control" placeholder="أدخل كود الخصم"
+                                       value="{{ cart.promo_code }}">
+                                
+                                <button type="button" class="btn btn-outline" data-apply-promo>تطبيق</button>
+                            </div>
+                            
+                            {% if cart.discount > 0 %}
+                            <div class="promo-code-applied">
+                                <span>تم تطبيق كود الخصم: {{ cart.promo_code }}</span>
+                                
+                                <button type="button" class="btn-remove" data-remove-promo>
+                                    <i class="icon-close"></i>
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <{# Order Notes #}
+                        <div class="form-section">
+                            <h3>ملاحظات الطلب (اختياري)</h3>
+                            
+                            <textarea name="notes" class="form-control" rows="3" 
+                                      placeholder="أي ملاحظات خاصة بطلبك...">{{ cart.notes }}</textarea>
+                        </div>
+                        
+                        <{# Terms Agreement #}
+                        <div class="form-group form-checkbox terms-agreement">
+                            <label>
+                                <input type="checkbox" name="terms_agreement" required>
+                                <span>
+                                    أوافق على <a href="/terms" target="_blank">شروط الاستخدام</a> و
+                                    <a href="/privacy" target="_blank">سياسة الخصوصية</a>
+                                </span>
+                            </label>
+                        </div>
+                        
+                        <{# Submit Button #}
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-text" data-prev-step>
+                                <i class="icon-arrow-right"></i>
+                                رجوع
+                            </button>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg btn-complete">
+                                إتمام الطلب
+                                <span class="btn-total">{{ cart.total|money }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <{# Order Summary Sidebar #}
+            <aside class="checkout-sidebar">
+                <div class="order-summary-box">
+                    <h3>ملخص الطلب</h3>
+                    
+                    <{# Cart Items #}
+                    <div class="summary-items">
+                        {% for item in cart.items %}
+                        <div class="summary-item">
+                            <div class="item-image">
+                                <img src="{{ item.product.image|resize(60, 60) }}" alt="" loading="lazy">
+                                
+                                <span class="item-qty">{{ item.quantity }}</span>
+                            </div>
+                            
+                            <div class="item-info">
+                                <h5>{{ item.product.name }}</h5>
+                                
+                                {% if item.variant %}
+                                <span class="item-variant">{{ item.variant.options|values|join(', ') }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="item-price">
+                                <span>{{ item.total|money }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <{# Summary Totals #}
+                    <div class="summary-totals">
+                        <div class="summary-row">
+                            <span>المجموع الفرعي</span>
+                            
+                            <span data-summary-subtotal>{{ cart.subtotal|money }}</span>
+                        </div>
+                        
+                        {% if cart.discount > 0 %}
+                        <div class="summary-row discount">
+                            <span>الخصم</span>
+                            
+                            <span data-summary-discount>-{{ cart.discount|money }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="summary-row">
+                            <span>الشحن</span>
+                            
+                            <span data-summary-shipping>{{ cart.shipping > 0 ? cart.shipping|money : 'مجاني' }}</span>
+                        </div>
+                        
+                        {% if cart.tax > 0 %}
+                        <div class="summary-row">
+                            <span>الضريبة</span>
+                            
+                            <span data-summary-tax>{{ cart.tax|money }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="summary-row total">
+                            <span>الإجمالي</span>
+                            
+                            <span class="total-amount" data-summary-total>{{ cart.total|money }}</span>
+                        </div>
+                    </div>
+                    
+                    <{# Trust Badges #}
+                    <div class="trust-badges">
+                        <div class="badge-item">
+                            <i class="icon-shield-check"></i>
+                            <span>دفع آمن 100%</span>
+                        </div>
+                        
+                        <div class="badge-item">
+                            <i class="icon-truck"></i>
+                            <span>شحن سريع</span>
+                        </div>
+                        
+                        <div class="badge-item">
+                            <i class="icon-refresh"></i>
+                            <span>إرجاع خلال 14 يوم</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Checkout functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        initCheckoutSteps();
+        initShippingMethods();
+        initPaymentMethods();
+        initPromoCode();
+    });
+</script>
+{% endblock %}

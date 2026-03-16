@@ -1,0 +1,44 @@
+{
+  "name": "Shadan - Quiet Luxury Jewelry Theme",
+  "description": "A premium, minimalist jewelry theme inspired by quiet luxury aesthetics. Features elegant typography, refined animations, and full RTL support for Arabic.",
+  "version": "1.0.0",
+  "author": "Shadan Design Studio",
+  "license": "MIT",
+  "type": "theme",
+  "platform": "salla",
+  "keywords": [
+    "jewelry",
+    "luxury",
+    "minimalist",
+    "elegant",
+    "premium",
+    "gold",
+    "diamonds",
+    "arabic",
+    "rtl"
+  ],
+  "features": [
+    "responsive-design",
+    "rtl-support",
+    "scroll-animations",
+    "cart-drawer",
+    "image-zoom",
+    "custom-fonts",
+    "mobile-first"
+  ],
+  "compatibility": {
+    "salla": ">=2.0.0"
+  },
+  "preview": {
+    "primary_color": "#1A1A1A",
+    "accent_color": "#C9A962",
+    "background_color": "#F5F5F3"
+  },
+  "settings": {
+    "config_file": "config/settings.json"
+  },
+  "assets": {
+    "css": ["assets/css/theme.css"],
+    "js": ["assets/js/theme.js"]
+  }
+}

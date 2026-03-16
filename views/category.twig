@@ -1,0 +1,427 @@
+{# Shadan - Premium Jewelry Theme #}
+{# Category/Collection Page Template #}
+
+{% extends 'layouts/master.twig' %}
+
+{% block title %}{{ category.name }} - {{ store.name }}{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ category.description|striptags|slice(0, 160)|default('تصفح تشكيلة ' ~ category.name ~ ' الفاخرة') }}">
+<meta property="og:title" content="{{ category.name }}">
+<meta property="og:description" content="{{ category.description|striptags|slice(0, 160) }}">
+<meta property="og:image" content="{{ category.image }}">
+{% endblock %}
+
+{% block content %}
+
+{# Category Header #}
+<section class="category-header" data-section="category-header" 
+         style="{% if category.image %}background-image: url('{{ category.image }}');{% endif %}">
+    <div class="category-header-overlay"></div>
+    <div class="container">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <ol class="breadcrumbs-list">
+                <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+                {% if category.parent %}
+                <li class="breadcrumb-item"><a href="{{ category.parent.url }}">{{ category.parent.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+            </ol>
+        </nav>
+        
+        <div class="category-header-content">
+            <h1 class="category-title">{{ category.name }}</h1>
+            {% if category.description %}
+            <p class="category-description">{{ category.description|raw }}</p>
+            {% endif %}
+            <div class="category-stats">
+                <span>{{ products.total }} منتج</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Category Content #}
+<section class="category-section section-padding" data-section="category">
+    <div class="container">
+        <div class="category-layout">
+            
+            {# Filter Sidebar #}
+            <aside class="filter-sidebar" data-sidebar="filters">
+                <div class="filter-sidebar-header">
+                    <h3 class="filter-title">
+                        <i class="icon-filter"></i>
+                        تصفية النتائج
+                    </h3>
+                    <button class="filter-close" data-action="close-filters" aria-label="إغلاق الفلاتر">
+                        <i class="icon-close"></i>
+                    </button>
+                </div>
+                
+                <div class="filter-groups">
+                    
+                    {# Active Filters #}
+                    {% if filters.active|length > 0 %}
+                    <div class="filter-group filter-active">
+                        <div class="filter-group-header">
+                            <h4>الفلاتر المطبقة</h4>
+                            <a href="{{ category.url }}" class="filter-clear">مسح الكل</a>
+                        </div>
+                        <div class="filter-active-tags">
+                            {% for filter in filters.active %}
+                            <a href="{{ filter.remove_url }}" class="filter-tag">
+                                {{ filter.label }}: {{ filter.value }}
+                                <i class="icon-close"></i>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {# Price Filter #}
+                    <div class="filter-group filter-price">
+                        <div class="filter-group-header" data-toggle="collapse">
+                            <h4>السعر</h4>
+                            <i class="icon-chevron-down"></i>
+                        </div>
+                        <div class="filter-group-content">
+                            <div class="price-range">
+                                <div class="price-inputs">
+                                    <div class="price-input">
+                                        <label>من</label>
+                                        <input type="number" name="price_min" value="{{ filters.price.min }}" min="0" placeholder="0">
+                                        <span class="currency">{{ store.currency.symbol }}</span>
+                                    </div>
+                                    <div class="price-input">
+                                        <label>إلى</label>
+                                        <input type="number" name="price_max" value="{{ filters.price.max }}" min="0" placeholder="{{ filters.price.max_available }}">
+                                        <span class="currency">{{ store.currency.symbol }}</span>
+                                    </div>
+                                </div>
+                                <div class="price-slider" data-slider="price">
+                                    <div class="slider-track"></div>
+                                    <div class="slider-range" style="left: 0%; right: 0%;"></div>
+                                    <button class="slider-thumb" data-thumb="min" style="left: 0%;"></button>
+                                    <button class="slider-thumb" data-thumb="max" style="left: 100%;"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {# Subcategories Filter #}
+                    {% if category.children|length > 0 %}
+                    <div class="filter-group filter-categories">
+                        <div class="filter-group-header" data-toggle="collapse">
+                            <h4>التصنيفات الفرعية</h4>
+                            <i class="icon-chevron-down"></i>
+                        </div>
+                        <div class="filter-group-content">
+                            <ul class="filter-list">
+                                {% for subcategory in category.children %}
+                                <li class="filter-item">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="categories[]" value="{{ subcategory.id }}" 
+                                               {{ subcategory.id in filters.categories ? 'checked' : '' }}>
+                                        <span class="checkmark"></span>
+                                        <span class="filter-label">{{ subcategory.name }}</span>
+                                        <span class="filter-count">({{ subcategory.products_count }})</span>
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {# Attributes Filters #}
+                    {% for attribute in category.attributes %}
+                    <div class="filter-group filter-attribute" data-attribute="{{ attribute.name }}">
+                        <div class="filter-group-header" data-toggle="collapse">
+                            <h4>{{ attribute.label }}</h4>
+                            <i class="icon-chevron-down"></i>
+                        </div>
+                        <div class="filter-group-content">
+                            {% if attribute.type == 'color' %}
+                            <div class="filter-colors">
+                                {% for value in attribute.values %}
+                                <label class="filter-color" title="{{ value.label }}">
+                                    <input type="checkbox" name="attributes[{{ attribute.name }}][]" value="{{ value.value }}"
+                                           {{ value.value in filters.attributes[attribute.name] ? 'checked' : '' }}>
+                                    <span class="color-swatch" style="background-color: {{ value.color }};"></span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <ul class="filter-list">
+                                {% for value in attribute.values %}
+                                <li class="filter-item">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="attributes[{{ attribute.name }}][]" value="{{ value.value }}"
+                                               {{ value.value in filters.attributes[attribute.name] ? 'checked' : '' }}>
+                                        <span class="checkmark"></span>
+                                        <span class="filter-label">{{ value.label }}</span>
+                                        <span class="filter-count">({{ value.count }})</span>
+                                    </label>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {# Availability Filter #}
+                    <div class="filter-group filter-availability">
+                        <div class="filter-group-header" data-toggle="collapse">
+                            <h4>توفر المنتج</h4>
+                            <i class="icon-chevron-down"></i>
+                        </div>
+                        <div class="filter-group-content">
+                            <ul class="filter-list">
+                                <li class="filter-item">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="availability" value="in_stock" {{ filters.availability == 'in_stock' ? 'checked' : '' }}>
+                                        <span class="checkmark"></span>
+                                        <span class="filter-label">متوفر فقط</span>
+                                    </label>
+                                </li>
+                                <li class="filter-item">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" name="has_discount" value="1" {{ filters.has_discount ? 'checked' : '' }}>
+                                        <span class="checkmark"></span>
+                                        <span class="filter-label">العروض والخصومات</span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-sidebar-footer">
+                    <button type="button" class="btn btn-primary btn-block" data-action="apply-filters">
+                        تطبيق الفلاتر
+                    </button>
+                </div>
+            </aside>
+            
+            {# Products Grid Area #}
+            <div class="category-main">
+                
+                {# Toolbar #}
+                <div class="category-toolbar">
+                    <div class="toolbar-left">
+                        <button class="btn btn-filter-toggle" data-action="open-filters">
+                            <i class="icon-filter"></i>
+                            <span>الفلاتر</span>
+                            {% if filters.active|length > 0 %}
+                            <span class="filter-badge">{{ filters.active|length }}</span>
+                            {% endif %}
+                        </button>
+                        
+                        <div class="results-count">
+                            <span>{{ products.total }} منتج</span>
+                        </div>
+                    </div>
+                    
+                    <div class="toolbar-right">
+                        
+                        {# Sort Options #}
+                        <div class="sort-dropdown">
+                            <label>ترتيب حسب:</label>
+                            <select name="sort" class="sort-select" data-sort="products">
+                                <option value="newest" {{ sort == 'newest' ? 'selected' : '' }}>الأحدث</option>
+                                <option value="price_asc" {{ sort == 'price_asc' ? 'selected' : '' }}>السعر: من الأقل للأعلى</option>
+                                <option value="price_desc" {{ sort == 'price_desc' ? 'selected' : '' }}>السعر: من الأعلى للأقل</option>
+                                <option value="name_asc" {{ sort == 'name_asc' ? 'selected' : '' }}>الاسم: أ-ي</option>
+                                <option value="name_desc" {{ sort == 'name_desc' ? 'selected' : '' }}>الاسم: ي-أ</option>
+                                <option value="bestselling" {{ sort == 'bestselling' ? 'selected' : '' }}>الأكثر مبيعاً</option>
+                                <option value="rating" {{ sort == 'rating' ? 'selected' : '' }}>الأعلى تقييماً</option>
+                            </select>
+                        </div>
+                        
+                        {# View Mode Toggle #}
+                        <div class="view-modes">
+                            <button class="view-mode {{ view_mode == 'grid' ? 'active' : '' }}" data-view="grid" aria-label="عرض شبكي">
+                                <i class="icon-th-large"></i>
+                            </button>
+                            <button class="view-mode {{ view_mode == 'list' ? 'active' : '' }}" data-view="list" aria-label="عرض قائمة">
+                                <i class="icon-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                {# Products Grid #}
+                {% if products.data|length > 0 %}
+                <div class="products-grid {{ view_mode == 'list' ? 'view-list' : 'view-grid' }}" data-grid="{{ view_mode == 'list' ? 'list' : '4' }}">
+                    {% for product in products.data %}
+                    <div class="product-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                        <div class="product-badges">
+                            {% if product.is_new %}<span class="badge badge-new">جديد</span>{% endif %}
+                            {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percentage }}%</span>{% endif %}
+                            {% if product.is_bestseller %}<span class="badge badge-bestseller">الأكثر مبيعاً</span>{% endif %}
+                        </div>
+                        
+                        <div class="product-wishlist">
+                            <button class="btn-wishlist" data-product-id="{{ product.id }}" aria-label="إضافة للمفضلة">
+                                <i class="icon-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <a href="{{ product.url }}" class="product-image-wrapper">
+                            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image primary" loading="lazy">
+                            {% if product.images[1] %}
+                            <img src="{{ product.images[1] }}" alt="{{ product.name }}" class="product-image secondary" loading="lazy">
+                            {% endif %}
+                        </a>
+                        
+                        <div class="product-info">
+                            {% if product.category %}
+                            <a href="{{ product.category.url }}" class="product-category">{{ product.category.name }}</a>
+                            {% endif %}
+                            
+                            <h3 class="product-name">
+                                <a href="{{ product.url }}">{{ product.name }}</a>
+                            </h3>
+                            
+                            <div class="product-rating">
+                                {% for i in 1..5 %}
+                                <i class="icon-star{{ i <= product.rating ? '' : '-o' }}"></i>
+                                {% endfor %}
+                                <span class="rating-count">({{ product.reviews_count }})</span>
+                            </div>
+                            
+                            <div class="product-price">
+                                {% if product.has_discount %}
+                                <span class="price-original">{{ product.price_before|money }}</span>
+                                {% endif %}
+                                <span class="price-current">{{ product.price|money }}</span>
+                            </div>
+                            
+                            {% if view_mode == 'list' %}
+                            <div class="product-short-description">
+                                {{ product.short_description|striptags|slice(0, 120) }}...
+                            </div>
+                            
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-add-cart" data-product-id="{{ product.id }}">
+                                    <i class="icon-cart-plus"></i>
+                                    أضف للسلة
+                                </button>
+                                <a href="{{ product.url }}" class="btn btn-outline">عرض التفاصيل</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if view_mode == 'grid' %}
+                        <div class="product-actions">
+                            <button class="btn btn-primary btn-add-cart" data-product-id="{{ product.id }}">
+                                <i class="icon-cart-plus"></i>
+                                أضف للسلة
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {# Pagination #}
+                {% if products.last_page > 1 %}
+                <div class="pagination-wrapper">
+                    <nav class="pagination" aria-label="Pagination">
+                        
+                        {# Previous Page #}
+                        {% if products.current_page > 1 %}
+                        <a href="{{ products.prev_page_url }}" class="pagination-prev" aria-label="الصفحة السابقة">
+                            <i class="icon-chevron-right"></i>
+                        </a>
+                        {% else %}
+                        <span class="pagination-prev disabled" aria-disabled="true">
+                            <i class="icon-chevron-right"></i>
+                        </span>
+                        {% endif %}
+                        
+                        <div class="pagination-pages">
+                            {% for page in products.links %}
+                            {% if page.label == '...' %}
+                            <span class="pagination-dots">...</span>
+                            {% elseif page.active %}
+                            <span class="pagination-page active" aria-current="page">{{ page.label }}</span>
+                            {% else %}
+                            <a href="{{ page.url }}" class="pagination-page">{{ page.label }}</a>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        {# Next Page #}
+                        {% if products.current_page < products.last_page %}
+                        <a href="{{ products.next_page_url }}" class="pagination-next" aria-label="الصفحة التالية">
+                            <i class="icon-chevron-left"></i>
+                        </a>
+                        {% else %}
+                        <span class="pagination-next disabled" aria-disabled="true">
+                            <i class="icon-chevron-left"></i>
+                        </span>
+                        {% endif %}
+                    </nav>
+                    
+                    <div class="pagination-info">
+                        <span>عرض {{ products.from }} - {{ products.to }} من {{ products.total }} منتج</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                
+                {# Empty State #}
+                <div class="category-empty">
+                    <div class="empty-icon">
+                        <i class="icon-search"></i>
+                    </div>
+                    <h3>لا توجد منتجات</h3>
+                    <p>لم نجد أي منتجات تطابق الفلاتر المحددة. جرب تعديل الفلاتر أو تصفح التصنيفات الأخرى.</p>
+                    <a href="{{ category.url }}" class="btn btn-primary">مسح الفلاتر</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Subcategories Showcase #}
+{% if category.children|length > 0 %}
+<section class="subcategories-section section-padding bg-light" data-section="subcategories">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2 class="section-title">تصفح حسب التصنيف</h2>
+        </div>
+        
+        <div class="subcategories-grid">
+            {% for subcategory in category.children %}
+            <a href="{{ subcategory.url }}" class="subcategory-card">
+                <div class="subcategory-image">
+                    <img src="{{ subcategory.image|default(asset('images/category-placeholder.jpg')) }}" alt="{{ subcategory.name }}" loading="lazy">
+                </div>
+                <div class="subcategory-info">
+                    <h3>{{ subcategory.name }}</h3>
+                    <span>{{ subcategory.products_count }} منتج</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Category page functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        initFilters();
+        initViewModeToggle();
+        initPriceSlider();
+    });
+</script>
+{% endblock %}

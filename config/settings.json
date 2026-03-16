@@ -1,0 +1,111 @@
+{
+  "theme": {
+    "name": "Shadan",
+    "version": "1.0.0"
+  },
+  "colors": {
+    "primary": "#1A1A1A",
+    "secondary": "#F5F5F3",
+    "accent": "#C9A962",
+    "text": "#333333",
+    "muted": "#8A8A8A",
+    "white": "#FFFFFF",
+    "black": "#000000",
+    "border": "#E5E5E5",
+    "error": "#DC3545",
+    "success": "#28A745",
+    "warning": "#FFC107"
+  },
+  "typography": {
+    "heading_font": "Playfair Display",
+    "body_font": "Inter",
+    "arabic_font": "Noto Sans Arabic",
+    "base_size": "16px",
+    "line_height": "1.6",
+    "letter_spacing": "0.02em"
+  },
+  "layout": {
+    "max_width": "1400px",
+    "container_padding": "24px",
+    "section_spacing": "80px",
+    "grid_gap": "24px"
+  },
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "32px",
+    "2xl": "48px",
+    "3xl": "64px",
+    "4xl": "80px"
+  },
+  "border_radius": {
+    "none": "0",
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px",
+    "xl": "16px",
+    "full": "9999px"
+  },
+  "shadows": {
+    "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+    "md": "0 4px 6px rgba(0, 0, 0, 0.07)",
+    "lg": "0 10px 15px rgba(0, 0, 0, 0.1)",
+    "xl": "0 20px 25px rgba(0, 0, 0, 0.1)",
+    "glow": "0 0 30px rgba(201, 169, 98, 0.3)"
+  },
+  "transitions": {
+    "fast": "150ms ease",
+    "normal": "300ms ease",
+    "slow": "500ms ease",
+    "slower": "800ms ease"
+  },
+  "breakpoints": {
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px"
+  },
+  "z_index": {
+    "dropdown": "100",
+    "sticky": "200",
+    "fixed": "300",
+    "modal": "400",
+    "popover": "500",
+    "tooltip": "600",
+    "cart_drawer": "700"
+  },
+  "features": {
+    "rtl_support": true,
+    "scroll_animations": true,
+    "cart_drawer": true,
+    "image_zoom": true,
+    "smooth_scroll": true,
+    "mobile_menu": true
+  },
+  "product": {
+    "image_ratio": "1/1",
+    "show_badges": true,
+    "show_quick_view": true,
+    "grid_columns": {
+      "mobile": 2,
+      "tablet": 3,
+      "desktop": 4
+    }
+  },
+  "header": {
+    "sticky": true,
+    "transparent_on_home": true,
+    "show_search": true,
+    "show_cart": true,
+    "show_wishlist": true
+  },
+  "footer": {
+    "show_newsletter": true,
+    "show_social": true,
+    "show_payment_icons": true,
+    "columns": 4
+  }
+}

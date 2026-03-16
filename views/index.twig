@@ -1,0 +1,344 @@
+{# Shadan - Premium Jewelry Theme #}
+{# Homepage Template #}
+
+{% extends 'layouts/master.twig' %}
+
+{% block content %}
+
+{# Hero Section #}
+<section class="hero-section" data-section="hero">
+    <div class="hero-slider">
+        {% for banner in store.banners|slice(0, 3) %}
+        <div class="hero-slide">
+            <div class="hero-image-wrapper">
+                <img src="{{ banner.image }}" alt="{{ banner.title }}" class="hero-image" loading="{{ loop.first ? 'eager' : 'lazy' }}">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-content">
+                <span class="hero-subtitle">{{ banner.subtitle|default('مجوهرات فاخرة') }}</span>
+                <h1 class="hero-title">{{ banner.title }}</h1>
+                <p class="hero-description">{{ banner.description }}</p>
+                <a href="{{ banner.url|default('/products') }}" class="btn btn-primary btn-lg">
+                    {{ banner.button_text|default('تسوق الآن') }}
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="hero-slide">
+            <div class="hero-image-wrapper">
+                <img src="{{ asset('images/hero-jewelry.jpg') }}" alt="Luxury Jewelry" class="hero-image">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-content">
+                <span class="hero-subtitle">مجوهرات فاخرة</span>
+                <h1 class="hero-title">أناقة تليق بك</h1>
+                <p class="hero-description">اكتشف تشكيلتنا الحصرية من المجوهرات الفاخرة المصممة بأعلى معايير الجودة</p>
+                <a href="/products" class="btn btn-primary btn-lg">تسوق الآن</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="hero-scroll-indicator">
+        <span>اسحب للأسفل</span>
+        <i class="icon-chevron-down"></i>
+    </div>
+</section>
+
+{# Featured Collections #}
+<section class="collections-section section-padding" data-section="collections">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">تشكيلاتنا</span>
+            <h2 class="section-title">المجموعات المميزة</h2>
+            <p class="section-description">اختر من مجموعاتنا المختارة بعناية لتناسب جميع الأذواق</p>
+        </div>
+        
+        <div class="collections-grid">
+            {% for category in categories|slice(0, 4) %}
+            <div class="collection-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <a href="{{ category.url }}" class="collection-link">
+                    <div class="collection-image-wrapper">
+                        <img src="{{ category.image }}" alt="{{ category.name }}" class="collection-image" loading="lazy">
+                        <div class="collection-overlay">
+                            <span class="collection-count">{{ category.products_count }} منتج</span>
+                        </div>
+                    </div>
+                    <div class="collection-info">
+                        <h3 class="collection-name">{{ category.name }}</h3>
+                        <span class="collection-cta">اكتشف المزيد <i class="icon-arrow-left"></i></span>
+                    </div>
+                </a>
+            </div>
+            {% else %}
+            {# Fallback collections #}
+            {% set fallback_collections = [
+                {name: 'خواتم الماس', image: 'collections/diamond-rings.jpg', count: 45},
+                {name: 'أساور الذهب', image: 'collections/gold-bracelets.jpg', count: 32},
+                {name: 'قلادات اللؤلؤ', image: 'collections/pearl-necklaces.jpg', count: 28},
+                {name: 'أقراط الأحجار الكريمة', image: 'collections/gemstone-earrings.jpg', count: 56}
+            ] %}
+            {% for collection in fallback_collections %}
+            <div class="collection-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <a href="/collections/{{ collection.name|slug }}" class="collection-link">
+                    <div class="collection-image-wrapper">
+                        <img src="{{ asset('images/' ~ collection.image) }}" alt="{{ collection.name }}" class="collection-image" loading="lazy">
+                        <div class="collection-overlay">
+                            <span class="collection-count">{{ collection.count }} منتج</span>
+                        </div>
+                    </div>
+                    <div class="collection-info">
+                        <h3 class="collection-name">{{ collection.name }}</h3>
+                        <span class="collection-cta">اكتشف المزيد <i class="icon-arrow-left"></i></span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# New Arrivals #}
+<section class="new-arrivals-section section-padding bg-light" data-section="new-arrivals">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">وصل حديثاً</span>
+            <h2 class="section-title">أحدث المنتجات</h2>
+            <p class="section-description">تشكيلة جديدة من المجوهرات الفاخرة</p>
+        </div>
+        
+        <div class="products-grid" data-grid="4">
+            {% for product in products.new|slice(0, 8) %}
+            <div class="product-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+                <div class="product-badges">
+                    {% if product.is_new %}<span class="badge badge-new">جديد</span>{% endif %}
+                    {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percentage }}%</span>{% endif %}
+                </div>
+                <div class="product-wishlist">
+                    <button class="btn-wishlist" data-product-id="{{ product.id }}" aria-label="إضافة للمفضلة">
+                        <i class="icon-heart"></i>
+                    </button>
+                </div>
+                <a href="{{ product.url }}" class="product-image-wrapper">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image primary" loading="lazy">
+                    {% if product.images[1] %}
+                    <img src="{{ product.images[1] }}" alt="{{ product.name }}" class="product-image secondary" loading="lazy">
+                    {% endif %}
+                </a>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="{{ product.url }}">{{ product.name }}</a>
+                    </h3>
+                    <div class="product-price">
+                        {% if product.has_discount %}
+                        <span class="price-original">{{ product.price_before|money }}</span>
+                        {% endif %}
+                        <span class="price-current">{{ product.price|money }}</span>
+                    </div>
+                    <div class="product-rating">
+                        {% for i in 1..5 %}
+                        <i class="icon-star{{ i <= product.rating ? '' : '-o' }}"></i>
+                        {% endfor %}
+                        <span class="rating-count">({{ product.reviews_count }})</span>
+                    </div>
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-primary btn-add-cart" data-product-id="{{ product.id }}">
+                        <i class="icon-cart-plus"></i>
+                        أضف للسلة
+                    </button>
+                </div>
+            </div>
+            {% else %}
+            {# Fallback products #}
+            {% for i in 1..4 %}
+            <div class="product-card placeholder" data-aos="fade-up" data-aos-delay="{{ i * 50 }}">
+                <div class="product-image-wrapper">
+                    <div class="placeholder-image"></div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">منتج تجريبي {{ i }}</h3>
+                    <div class="product-price">
+                        <span class="price-current">{{ (500 + i * 100)|money }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="section-footer text-center">
+            <a href="/products?sort=newest" class="btn btn-outline btn-lg">عرض جميع المنتجات الجديدة</a>
+        </div>
+    </div>
+</section>
+
+{# Brand Story #}
+<section class="brand-story-section section-padding" data-section="brand-story">
+    <div class="container">
+        <div class="brand-story-grid">
+            <div class="brand-story-content" data-aos="fade-right">
+                <span class="section-subtitle">قصتنا</span>
+                <h2 class="section-title">شذى - فن المجوهرات الأصيلة</h2>
+                <div class="brand-story-text">
+                    <p>منذ عام 2010، نسعى في شذى لتقديم تجربة فريدة في عالم المجوهرات الفاخرة. نؤمن بأن كل قطعة مجوهرات تحمل في طياتها قصة عشق وجمال.</p>
+                    <p>نختار أحجارنا الكريمة بعناية فائقة، ونصمم قطعنا بأيدي صناع مهرة يجمعون بين الأصالة والحداثة.</p>
+                </div>
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="icon-diamond"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>أحجار طبيعية 100%</h4>
+                            <p>نضمن أصالة جميع أحجارنا الكريمة</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="icon-certificate"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>شهادات معتمدة</h4>
+                            <p>كل قطعة مصحوبة بشهادة أصالة</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="icon-shipping"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>توصيل آمن</h4>
+                            <p>شحن مؤمن على جميع الطلبات</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="/about" class="btn btn-outline btn-lg">تعرف علينا أكثر</a>
+            </div>
+            <div class="brand-story-images" data-aos="fade-left">
+                <div class="story-image-main">
+                    <img src="{{ asset('images/brand-story-1.jpg') }}" alt="صناعة المجوهرات" loading="lazy">
+                </div>
+                <div class="story-image-secondary">
+                    <img src="{{ asset('images/brand-story-2.jpg') }}" alt="تفاصيل المجوهرات" loading="lazy">
+                </div>
+                <div class="story-badge">
+                    <span class="badge-number">14+</span>
+                    <span class="badge-text">سنوات من الخبرة</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Best Sellers #}
+<section class="bestsellers-section section-padding bg-light" data-section="bestsellers">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">الأكثر مبيعاً</span>
+            <h2 class="section-title">منتجاتنا الأكثر طلباً</h2>
+        </div>
+        
+        <div class="products-slider" data-slider="bestsellers">
+            {% for product in products.best_selling|slice(0, 6) %}
+            <div class="product-card">
+                <div class="product-badges">
+                    {% if product.is_bestseller %}<span class="badge badge-bestseller">الأكثر مبيعاً</span>{% endif %}
+                </div>
+                <a href="{{ product.url }}" class="product-image-wrapper">
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                </a>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="{{ product.url }}">{{ product.name }}</a>
+                    </h3>
+                    <div class="product-price">
+                        <span class="price-current">{{ product.price|money }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{# Newsletter #}
+<section class="newsletter-section" data-section="newsletter">
+    <div class="container">
+        <div class="newsletter-wrapper" data-aos="fade-up">
+            <div class="newsletter-content">
+                <div class="newsletter-icon">
+                    <i class="icon-envelope-open"></i>
+                </div>
+                <h2 class="newsletter-title">اشترك في نشرتنا البريدية</h2>
+                <p class="newsletter-description">احصل على أحدث العروض والتشكيلات الحصرية مباشرة إلى بريدك</p>
+                
+                <form class="newsletter-form" action="/newsletter/subscribe" method="POST" data-form="newsletter">
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-control" placeholder="أدخل بريدك الإلكتروني" required>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            اشترك الآن
+                            <i class="icon-arrow-left"></i>
+                        </button>
+                    </div>
+                    <p class="form-note">نحن نحترم خصوصيتك. لن نشارك بريدك مع أي طرف ثالث.</p>
+                </form>
+            </div>
+            <div class="newsletter-benefits">
+                <div class="benefit-item">
+                    <i class="icon-percent"></i>
+                    <span>خصم 10% على أول طلب</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="icon-gift"></i>
+                    <span>عروض حصرية للمشتركين</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="icon-bell"></i>
+                    <span>تنبيهات بالمنتجات الجديدة</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Instagram Feed #}
+<section class="instagram-section section-padding" data-section="instagram">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">@shadan.jewelry</span>
+            <h2 class="section-title">تابعنا على إنستغرام</h2>
+        </div>
+        <div class="instagram-grid">
+            {% for i in 1..6 %}
+            <a href="https://instagram.com/shadan.jewelry" target="_blank" class="instagram-item" data-aos="fade-up" data-aos-delay="{{ i * 100 }}">
+                <img src="{{ asset('images/instagram-' ~ i ~ '.jpg') }}" alt="Instagram post" loading="lazy">
+                <div class="instagram-overlay">
+                    <i class="icon-instagram"></i>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Hero Slider
+    document.addEventListener('DOMContentLoaded', function() {
+        const heroSlider = document.querySelector('.hero-slider');
+        if (heroSlider && heroSlider.children.length > 1) {
+            // Initialize slider logic
+            initHeroSlider(heroSlider);
+        }
+        
+        // Products slider
+        const productsSlider = document.querySelector('[data-slider="bestsellers"]');
+        if (productsSlider) {
+            initProductsSlider(productsSlider);
+        }
+    });
+</script>
+{% endblock %}

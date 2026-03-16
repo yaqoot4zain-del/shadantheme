@@ -1,0 +1,487 @@
+{# Shadan - Premium Jewelry Theme #}
+{# Product Page Template #}
+
+{% extends 'layouts/master.twig' %}
+
+{% block title %}{{ product.name }} - {{ store.name }}{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ product.description|striptags|slice(0, 160) }}">
+<meta property="og:title" content="{{ product.name }}">
+<meta property="og:description" content="{{ product.description|striptags|slice(0, 160) }}">
+<meta property="og:image" content="{{ product.image }}">
+<meta property="og:type" content="product">
+<meta property="product:price:amount" content="{{ product.price }}">
+<meta property="product:price:currency" content="{{ store.currency.code }}">
+{% endblock %}
+
+{% block content %}
+
+{# Breadcrumbs #}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <div class="container">
+        <ol class="breadcrumbs-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="/" itemprop="item">
+                    <span itemprop="name">الرئيسية</span>
+                </a>
+                <meta itemprop="position" content="1">
+            </li>
+            {% if product.category %}
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="{{ product.category.url }}" itemprop="item">
+                    <span itemprop="name">{{ product.category.name }}</span>
+                </a>
+                <meta itemprop="position" content="2">
+            </li>
+            {% endif %}
+            <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem" aria-current="page">
+                <span itemprop="name">{{ product.name }}</span>
+                <meta itemprop="position" content="{{ product.category ? 3 : 2 }}">
+            </li>
+        </ol>
+    </div>
+</nav>
+
+{# Product Main Section #}
+<section class="product-section section-padding" data-section="product">
+    <div class="container">
+        <div class="product-layout">
+            
+            {# Product Images Gallery #}
+            <div class="product-gallery" data-gallery="product">
+                <div class="gallery-main">
+                    <div class="gallery-main-wrapper">
+                        {% for image in product.images|default([product.image]) %}
+                        <div class="gallery-slide {{ loop.first ? 'active' : '' }}" data-index="{{ loop.index0 }}">
+                            <div class="image-zoom-wrapper" data-zoom="image">
+                                <img src="{{ image }}" 
+                                     alt="{{ product.name }} - صورة {{ loop.index }}" 
+                                     class="gallery-image"
+                                     data-zoom-image="{{ image }}"
+                                     loading="{{ loop.first ? 'eager' : 'lazy' }}">
+                                <div class="zoom-lens" data-zoom-lens></div>
+                            </div>
+                            <div class="zoom-result" data-zoom-result>
+                                <img src="{{ image }}" alt="">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {# Gallery Navigation #}
+                    {% if product.images|length > 1 %}
+                    <button class="gallery-nav gallery-prev" aria-label="الصورة السابقة">
+                        <i class="icon-chevron-right"></i>
+                    </button>
+                    <button class="gallery-nav gallery-next" aria-label="الصورة التالية">
+                        <i class="icon-chevron-left"></i>
+                    </button>
+                    {% endif %}
+                    
+                    {# Product Badges #}
+                    <div class="gallery-badges">
+                        {% if product.is_new %}<span class="badge badge-new">جديد</span>{% endif %}
+                        {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percentage }}%</span>{% endif %}
+                        {% if product.is_bestseller %}<span class="badge badge-bestseller">الأكثر مبيعاً</span>{% endif %}
+                        {% if product.stock_quantity < 5 and product.stock_quantity > 0 %}
+                        <span class="badge badge-low-stock">باقي {{ product.stock_quantity }} فقط</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {# Gallery Thumbnails #}
+                {% if product.images|length > 1 %}
+                <div class="gallery-thumbs">
+                    {% for image in product.images %}
+                    <button class="thumb-item {{ loop.first ? 'active' : '' }}" data-index="{{ loop.index0 }}" aria-label="صورة {{ loop.index }}">
+                        <img src="{{ image|resize(150, 150) }}" alt="" loading="lazy">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            {# Product Info #}
+            <div class="product-info">
+                <div class="product-header">
+                    {% if product.brand %}
+                    <a href="{{ product.brand.url }}" class="product-brand">{{ product.brand.name }}</a>
+                    {% endif %}
+                    
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    
+                    <div class="product-meta">
+                        <div class="product-rating">
+                            <div class="stars" data-rating="{{ product.rating }}">
+                                {% for i in 1..5 %}
+                                <i class="icon-star{{ i <= product.rating ? '' : '-o' }}"></i>
+                                {% endfor %}
+                            </div>
+                            <a href="#reviews" class="rating-count">{{ product.reviews_count }} تقييم</a>
+                        </div>
+                        <div class="product-sku">
+                            <span>SKU: {{ product.sku }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                {# Product Price #}
+                <div class="product-price-wrapper">
+                    {% if product.has_discount %}
+                    <div class="price-original">
+                        <span class="label">السعر الأصلي:</span>
+                        <span class="value">{{ product.price_before|money }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="price-current">
+                        <span class="label">السعر الحالي:</span>
+                        <span class="value">{{ product.price|money }}</span>
+                    </div>
+                    
+                    {% if product.has_discount %}
+                    <div class="price-savings">
+                        <span class="savings-badge">وفّر {{ (product.price_before - product.price)|money }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {# Short Description #}
+                {% if product.short_description %}
+                <div class="product-short-description">
+                    {{ product.short_description|raw }}
+                </div>
+                {% endif %}
+                
+                {# Product Form #}
+                <form class="product-form" action="/cart/add" method="POST" data-form="product" data-product-id="{{ product.id }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    
+                    {# Variants Selection #}
+                    {% if product.variants|length > 0 %}
+                    <div class="product-variants">
+                        {% for option in product.options %}
+                        <div class="variant-group" data-option="{{ option.name }}">
+                            <label class="variant-label">{{ option.name }}: <span class="variant-selected"></span></label>
+                            
+                            <div class="variant-options">
+                                {% for value in option.values %}
+                                {% if option.type == 'color' %}
+                                <button type="button" 
+                                        class="variant-option variant-color {{ loop.first ? 'active' : '' }}" 
+                                        data-value="{{ value }}"
+                                        style="background-color: {{ value }};"
+                                        title="{{ value }}">
+                                    <span class="color-swatch"></span>
+                                </button>
+                                {% else %}
+                                <button type="button" 
+                                        class="variant-option {{ loop.first ? 'active' : '' }}" 
+                                        data-value="{{ value }}">
+                                    {{ value }}
+                                </button>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" name="options[{{ option.name }}]" value="{{ option.values[0] }}">
+                        </div>
+                        {% endfor %}
+                        <input type="hidden" name="variant_id" value="{{ product.variants[0].id }}">
+                    </div>
+                    {% endif %}
+                    
+                    {# Quantity Selector #}
+                    <div class="product-quantity">
+                        <label class="quantity-label">الكمية:</label>
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn qty-minus" aria-label="تقليل الكمية">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" class="qty-input">
+                            <button type="button" class="qty-btn qty-plus" aria-label="زيادة الكمية">+</button>
+                        </div>
+                    </div>
+                    
+                    {# Add to Cart Actions #}
+                    <div class="product-actions">
+                        {% if product.is_available %}
+                        <button type="submit" class="btn btn-primary btn-lg btn-add-cart" data-action="add-to-cart">
+                            <i class="icon-cart-plus"></i>
+                            أضف للسلة
+                        </button>
+                        
+                        <button type="button" class="btn btn-outline btn-lg btn-buy-now" data-action="buy-now">
+                            اشترِ الآن
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-disabled btn-lg" disabled>
+                            غير متوفر حالياً
+                        </button>
+                        {% endif %}
+                        
+                        <button type="button" class="btn btn-icon btn-wishlist {{ product.in_wishlist ? 'active' : '' }}" 
+                                data-action="toggle-wishlist"
+                                data-product-id="{{ product.id }}"
+                                aria-label="{{ product.in_wishlist ? 'إزالة من المفضلة' : 'إضافة للمفضلة' }}">
+                            <i class="icon-heart{{ product.in_wishlist ? '' : '-o' }}"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                {# Product Features #}
+                <div class="product-features-mini">
+                    <div class="feature-item">
+                        <i class="icon-shipping"></i>
+                        <span>شحن مجاني للطلبات فوق {{ 500|money }}</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="icon-refresh"></i>
+                        <span>إرجاع مجاني خلال 14 يوم</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="icon-shield-check"></i>
+                        <span>ضمان أصلة 100%</span>
+                    </div>
+                </div>
+                
+                {# Share Buttons #}
+                <div class="product-share">
+                    <span class="share-label">مشاركة:</span>
+                    <div class="share-buttons">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ product.url|url_encode }}" target="_blank" class="share-btn" aria-label="مشاركة على فيسبوك">
+                            <i class="icon-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ product.url|url_encode }}&text={{ product.name|url_encode }}" target="_blank" class="share-btn" aria-label="مشاركة على تويتر">
+                            <i class="icon-twitter"></i>
+                        </a>
+                        <a href="https://wa.me/?text={{ (product.name ~ ' ' ~ product.url)|url_encode }}" target="_blank" class="share-btn" aria-label="مشاركة على واتساب">
+                            <i class="icon-whatsapp"></i>
+                        </a>
+                        <button type="button" class="share-btn" data-action="copy-link" aria-label="نسخ الرابط">
+                            <i class="icon-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Product Details Tabs #}
+<section class="product-details-section section-padding bg-light" data-section="product-details">
+    <div class="container">
+        <div class="details-tabs" data-tabs="product">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">الوصف</button>
+                <button class="tab-btn" data-tab="specifications">المواصفات</button>
+                <button class="tab-btn" data-tab="shipping">الشحن والتوصيل</button>
+                <button class="tab-btn" data-tab="reviews">التقييمات ({{ product.reviews_count }})</button>
+            </div>
+            
+            <div class="tabs-content">
+                
+                {# Description Tab #}
+                <div class="tab-panel active" data-panel="description">
+                    <div class="product-description">
+                        {{ product.description|raw }}
+                    </div>
+                </div>
+                
+                {# Specifications Tab #}
+                <div class="tab-panel" data-panel="specifications">
+                    <div class="product-specs">
+                        <table class="specs-table">
+                            <tbody>
+                                {% for attribute in product.attributes %}
+                                <tr>
+                                    <th>{{ attribute.name }}</th>
+                                    <td>{{ attribute.value }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <th>النوع</th>
+                                    <td>{{ product.category.name|default('مجوهرات') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>المادة</th>
+                                    <td>ذهب عيار 18</td>
+                                </tr>
+                                <tr>
+                                    <th>الحجر</th>
+                                    <td>ألماس طبيعي</td>
+                                </tr>
+                                <tr>
+                                    <th>الوزن</th>
+                                    <td>{{ product.weight|default('5') }} جرام</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                {# Shipping Tab #}
+                <div class="tab-panel" data-panel="shipping">
+                    <div class="shipping-info">
+                        <div class="shipping-item">
+                            <div class="shipping-icon">
+                                <i class="icon-truck"></i>
+                            </div>
+                            <div class="shipping-content">
+                                <h4>الشحن</h4>
+                                <p>شحن مجاني للطلبات التي تزيد عن {{ 500|money }}. يتم التوصيل خلال 2-5 أيام عمل داخل المدن الرئيسية.</p>
+                            </div>
+                        </div>
+                        <div class="shipping-item">
+                            <div class="shipping-icon">
+                                <i class="icon-refresh"></i>
+                            </div>
+                            <div class="shipping-content">
+                                <h4>الإرجاع</h4>
+                                <p>يمكنك إرجاع المنتج خلال 14 يوماً من تاريخ الاستلام. يجب أن يكون المنتج في حالته الأصلية مع جميع الملحقات.</p>
+                            </div>
+                        </div>
+                        <div class="shipping-item">
+                            <div class="shipping-icon">
+                                <i class="icon-shield-check"></i>
+                            </div>
+                            <div class="shipping-content">
+                                <h4>الضمان</h4>
+                                <p>جميع منتجاتنا مضمونة 100% أصلية ومصحوبة بشهادات معتمدة. ضمان لمدة عام على جميع المجوهرات.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {# Reviews Tab #}
+                <div class="tab-panel" data-panel="reviews" id="reviews">
+                    <div class="reviews-section">
+                        <div class="reviews-summary">
+                            <div class="rating-average">
+                                <span class="average-number">{{ product.rating|number_format(1) }}</span>
+                                <div class="average-stars">
+                                    {% for i in 1..5 %}
+                                    <i class="icon-star{{ i <= product.rating ? '' : '-o' }}"></i>
+                                    {% endfor %}
+                                </div>
+                                <span class="total-reviews">{{ product.reviews_count }} تقييم</span>
+                            </div>
+                            
+                            <div class="rating-bars">
+                                {% for i in 5..1 %}
+                                <div class="rating-bar">
+                                    <span class="bar-label">{{ i }} نجوم</span>
+                                    <div class="bar-track">
+                                        <div class="bar-fill" style="width: {{ product.rating_distribution[i]|default(0) }}%"></div>
+                                    </div>
+                                    <span class="bar-count">{{ product.rating_distribution[i]|default(0) }}%</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="reviews-actions">
+                                <button class="btn btn-primary" data-action="write-review">اكتب تقييم</button>
+                            </div>
+                        </div>
+                        
+                        <div class="reviews-list">
+                            {% for review in product.reviews|slice(0, 5) %}
+                            <div class="review-item">
+                                <div class="review-header">
+                                    <div class="reviewer-info">
+                                        <img src="{{ review.author.avatar|default(asset('images/avatar-placeholder.jpg')) }}" alt="" class="reviewer-avatar">
+                                        <div class="reviewer-meta">
+                                            <span class="reviewer-name">{{ review.author.name }}</span>
+                                            <span class="review-date">{{ review.created_at|date('Y-m-d') }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-rating">
+                                        {% for i in 1..5 %}
+                                        <i class="icon-star{{ i <= review.rating ? '' : '-o' }}"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="review-content">
+                                    <h4 class="review-title">{{ review.title }}</h4>
+                                    <p>{{ review.content }}</p>
+                                </div>
+                                {% if review.images %}
+                                <div class="review-images">
+                                    {% for image in review.images %}
+                                    <a href="{{ image }}" class="review-image" data-lightbox="review-{{ review.id }}">
+                                        <img src="{{ image|resize(100, 100) }}" alt="">
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
+                            <div class="reviews-empty">
+                                <i class="icon-comment-o"></i>
+                                <p>لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Related Products #}
+{% if product.related_products|length > 0 %}
+<section class="related-products-section section-padding" data-section="related-products">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">قد يعجبك أيضاً</span>
+            <h2 class="section-title">منتجات مشابهة</h2>
+        </div>
+        
+        <div class="products-grid" data-grid="4">
+            {% for related in product.related_products|slice(0, 4) %}
+            <div class="product-card">
+                <a href="{{ related.url }}" class="product-image-wrapper">
+                    <img src="{{ related.image }}" alt="{{ related.name }}" class="product-image" loading="lazy">
+                </a>
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="{{ related.url }}">{{ related.name }}</a>
+                    </h3>
+                    <div class="product-price">
+                        <span class="price-current">{{ related.price|money }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# Recently Viewed #}
+<section class="recently-viewed-section section-padding bg-light" data-section="recently-viewed">
+    <div class="container">
+        <div class="section-header text-center">
+            <span class="section-subtitle">شاهدت مؤخراً</span>
+            <h2 class="section-title">منتجات تصفحتها</h2>
+        </div>
+        
+        <div class="products-slider" data-slider="recently-viewed">
+            {# Populated via JavaScript from localStorage #}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Product Gallery Zoom
+    document.addEventListener('DOMContentLoaded', function() {
+        initProductGallery();
+        initProductTabs();
+        initVariantSelection();
+        initQuantitySelector();
+    });
+</script>
+{% endblock %}

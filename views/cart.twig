@@ -1,0 +1,490 @@
+{# Shadan - Premium Jewelry Theme #}
+{# Cart Drawer/Modal Template #}
+
+<div class="cart-drawer" data-cart-drawer aria-hidden="true">
+    
+    {# Overlay #}
+    <div class="cart-overlay" data-cart-overlay></div>
+    
+    {# Cart Container #}
+    <div class="cart-container">
+        
+        {# Cart Header #}
+        <div class="cart-header">
+            <h2 class="cart-title">
+                <i class="icon-shopping-bag"></i>
+                سلة التسوق
+                <span class="cart-count" data-cart-count>{{ cart.items_count }}</span>
+            </h2>
+            
+            <button class="cart-close" data-cart-close aria-label="إغلاق السلة">
+                <i class="icon-close"></i>
+            </button>
+        </div>
+        
+        {# Cart Content #}
+        <div class="cart-content">
+            {% if cart.items|length > 0 %}
+            
+            {# Cart Items #}
+            <div class="cart-items">
+                {% for item in cart.items %}
+                <div class="cart-item" data-cart-item="{{ item.id }}" data-product-id="{{ item.product_id }}">
+                    
+                    {# Item Image #}
+                    <div class="cart-item-image">
+                        <a href="{{ item.product.url }}">
+                            <img src="{{ item.product.image }}" alt="{{ item.product.name }}" loading="lazy">
+                        </a>
+                    </div>
+                    
+                    {# Item Details #}
+                    <div class="cart-item-details">
+                        <h4 class="cart-item-name">
+                            <a href="{{ item.product.url }}">{{ item.product.name }}</a>
+                        </h4>
+                        
+                        {% if item.variant %}
+                        <div class="cart-item-variant">
+                            {% for option, value in item.variant.options %}
+                            <span class="variant-option">{{ option }}: {{ value }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="cart-item-price">
+                            <span class="unit-price">{{ item.unit_price|money }}</span>
+                            {% if item.quantity > 1 %}
+                            <span class="total-price">{{ item.total|money }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {# Item Actions #}
+                    <div class="cart-item-actions">
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn qty-minus" data-action="decrease-qty" aria-label="تقليل الكمية">-</button>
+                            
+                            <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" max="{{ item.product.stock_quantity }}" data-item-id="{{ item.id }}">
+                            
+                            <button type="button" class="qty-btn qty-plus" data-action="increase-qty" aria-label="زيادة الكمية">+</button>
+                        </div>
+                        
+                        <button type="button" class="btn-remove" data-action="remove-item" data-item-id="{{ item.id }}" aria-label="إزالة من السلة">
+                            <i class="icon-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {# Cart Upsells #}
+            {% if cart.upsells|length > 0 %}
+            <div class="cart-upsells">
+                <h4 class="upsells-title">قد يعجبك أيضاً</h4>
+                
+                <div class="upsells-list">
+                    {% for upsell in cart.upsells|slice(0, 3) %}
+                    <div class="upsell-item">
+                        <a href="{{ upsell.url }}" class="upsell-image">
+                            <img src="{{ upsell.image|resize(80, 80) }}" alt="{{ upsell.name }}" loading="lazy">
+                        </a>
+                        
+                        <div class="upsell-info">
+                            <h5><a href="{{ upsell.url }}">{{ upsell.name }}</a></h5>
+                            <span class="upsell-price">{{ upsell.price|money }}</span>
+                        </div>
+                        
+                        <button type="button" class="btn btn-sm btn-add-cart" data-product-id="{{ upsell.id }}">
+                            <i class="icon-plus"></i>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            {# Cart Footer #}
+            <div class="cart-footer">
+                
+                {# Cart Notes #}
+                <div class="cart-notes">
+                    <label for="cart-note">ملاحظات الطلب (اختياري)</label>
+                    <textarea id="cart-note" name="note" class="form-control" rows="2" placeholder="أضف ملاحظات خاصة بطلبك...">{{ cart.note }}</textarea>
+                </div>
+                
+                {# Cart Summary #}
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>المجموع الفرعي</span>
+                        <span data-cart-subtotal>{{ cart.subtotal|money }}</span>
+                    </div>
+                    
+                    {% if cart.discount > 0 %}
+                    <div class="summary-row discount">
+                        <span>الخصم</span>
+                        <span data-cart-discount>-{{ cart.discount|money }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="summary-row">
+                        <span>الشحن</span>
+                        <span>{{ cart.shipping > 0 ? cart.shipping|money : 'مجاني' }}</span>
+                    </div>
+                    
+                    {% if cart.tax > 0 %}
+                    <div class="summary-row">
+                        <span>الضريبة</span>
+                        <span data-cart-tax>{{ cart.tax|money }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="summary-row total">
+                        <span>الإجمالي</span>
+                        <span class="total-amount" data-cart-total>{{ cart.total|money }}</span>
+                    </div>
+                    
+                    {% if cart.free_shipping_threshold %}
+                    <div class="free-shipping-progress">
+                        {% set remaining = cart.free_shipping_threshold - cart.subtotal %}
+                        {% set progress = (cart.subtotal / cart.free_shipping_threshold * 100)|min(100) %}
+                        
+                        <div class="progress-text">
+                            {% if remaining > 0 %}
+                            <span>أضف بقيمة {{ remaining|money }} للحصول على شحن مجاني</span>
+                            {% else %}
+                            <span>🎉 مبروك! لقد حصلت على شحن مجاني</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ progress }}%"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {# Cart Actions #}
+                <div class="cart-actions">
+                    <a href="/checkout" class="btn btn-primary btn-lg btn-checkout">
+                        إتمام الطلب
+                        <i class="icon-arrow-left"></i>
+                    </a>
+                    
+                    <a href="/cart" class="btn btn-outline btn-view-cart">عرض السلة</a>
+                    
+                    <button type="button" class="btn btn-text btn-continue" data-cart-close>مواصلة التسوق</button>
+                </div>
+                
+                {# Payment Icons #}
+                <div class="cart-payment-icons">
+                    <span>طرق الدفع الآمنة:</span>
+                    <div class="payment-icons">
+                        <i class="icon-visa" title="Visa"></i>
+                        <i class="icon-mastercard" title="Mastercard"></i>
+                        <i class="icon-mada" title="Mada"></i>
+                        <i class="icon-apple-pay" title="Apple Pay"></i>
+                    </div>
+                </div>
+            </div>
+            
+            {% else %}
+            
+            {# Empty Cart #}
+            <div class="cart-empty">
+                <div class="empty-icon">
+                    <i class="icon-shopping-bag"></i>
+                </div>
+                
+                <h3>سلة التسوق فارغة</h3>
+                
+                <p>ابدأ التسوق واكتشف تشكيلتنا الفاخرة من المجوهرات</p>
+                
+                <a href="/products" class="btn btn-primary btn-lg">
+                    تصفح المنتجات
+                    <i class="icon-arrow-left"></i>
+                </a>
+                
+                <div class="empty-recommendations">
+                    <h4>الأكثر مبيعاً</h4>
+                    
+                    <div class="mini-products-grid">
+                        {% for product in products.best_selling|slice(0, 3) %}
+                        <div class="mini-product-card">
+                            <a href="{{ product.url }}" class="mini-product-image">
+                                <img src="{{ product.image|resize(100, 100) }}" alt="{{ product.name }}" loading="lazy">
+                            </a>
+                            
+                            <div class="mini-product-info">
+                                <h5><a href="{{ product.url }}">{{ product.name }}</a></h5>
+                                <span>{{ product.price|money }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# Cart Mini (Header Icon) #}
+<div class="cart-mini" data-cart-mini>
+    <a href="/cart" class="cart-toggle" data-cart-toggle aria-label="سلة التسوق">
+        <i class="icon-shopping-bag"></i>
+        <span class="cart-count" data-cart-count>{{ cart.items_count }}</span>
+    </a>
+    
+    {# Mini Cart Dropdown #}
+    <div class="cart-dropdown">
+        {% if cart.items|length > 0 %}
+        <div class="dropdown-header">
+            <span>{{ cart.items_count }} منتج في السلة</span>
+        </div>
+        
+        <div class="dropdown-items">
+            {% for item in cart.items|slice(0, 3) %}
+            <div class="dropdown-item">
+                <a href="{{ item.product.url }}" class="item-image">
+                    <img src="{{ item.image|resize(60, 60) }}" alt="" loading="lazy">
+                </a>
+                
+                <div class="item-info">
+                    <h6><a href="{{ item.product.url }}">{{ item.product.name }}</a></h6>
+                    <span class="item-qty">{{ item.quantity }} × {{ item.unit_price|money }}</span>
+                </div>
+                
+                <button type="button" class="btn-remove" data-action="remove-item" data-item-id="{{ item.id }}">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            {% endfor %}
+            
+            {% if cart.items|length > 3 %}
+            <div class="dropdown-more">
+                <span>+{{ cart.items|length - 3 }} منتجات أخرى</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="dropdown-footer">
+            <div class="dropdown-total">
+                <span>الإجمالي:</span>
+                <span>{{ cart.total|money }}</span>
+            </div>
+            
+            <a href="/checkout" class="btn btn-primary btn-sm btn-block">إتمام الطلب</a>
+            
+            <a href="/cart" class="btn btn-text btn-sm btn-block">عرض السلة</a>
+        </div>
+        {% else %}
+        <div class="dropdown-empty">
+            <i class="icon-shopping-bag"></i>
+            <p>السلة فارغة</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Cart Page (Full Page Version) #}
+{% if is_cart_page %}
+
+{% extends 'layouts/master.twig' %}
+
+{% block title %}سلة التسوق - {{ store.name }}{% endblock %}
+
+{% block content %}
+
+<section class="cart-page-section section-padding" data-section="cart-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">سلة التسوق</h1>
+            
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="/">الرئيسية</a></li>
+                    <li>السلة</li>
+                </ol>
+            </nav>
+        </div>
+        
+        {% if cart.items|length > 0 %}
+        <div class="cart-page-layout">
+            
+            {# Cart Items Table #}
+            <div class="cart-items-section">
+                <form action="/cart/update" method="POST" data-form="cart-update">
+                    <div class="cart-table">
+                        <div class="cart-table-header">
+                            <div class="col-product">المنتج</div>
+                            <div class="col-price">السعر</div>
+                            <div class="col-quantity">الكمية</div>
+                            <div class="col-total">المجموع</div>
+                            <div class="col-actions"></div>
+                        </div>
+                        
+                        <div class="cart-table-body">
+                            {% for item in cart.items %}
+                            <div class="cart-table-row" data-cart-item="{{ item.id }}">
+                                <div class="col-product">
+                                    <div class="product-info">
+                                        <a href="{{ item.product.url }}" class="product-image">
+                                            <img src="{{ item.product.image }}" alt="{{ item.product.name }}" loading="lazy">
+                                        </a>
+                                        
+                                        <div class="product-details">
+                                            <h4><a href="{{ item.product.url }}">{{ item.product.name }}</a></h4>
+                                            
+                                            {% if item.variant %}
+                                            <div class="product-variant">
+                                                {% for option, value in item.variant.options %}
+                                                <span>{{ option }}: {{ value }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-price">
+                                    <span class="price">{{ item.unit_price|money }}</span>
+                                </div>
+                                
+                                <div class="col-quantity">
+                                    <div class="quantity-selector">
+                                        <button type="button" class="qty-btn qty-minus">-</button>
+                                        
+                                        <input type="number" name="items[{{ item.id }}]" value="{{ item.quantity }}" min="0" max="{{ item.product.stock_quantity }}">
+                                        
+                                        <button type="button" class="qty-btn qty-plus">+</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-total">
+                                    <span class="total">{{ item.total|money }}</span>
+                                </div>
+                                
+                                <div class="col-actions">
+                                    <button type="button" class="btn-remove" data-action="remove-item" data-item-id="{{ item.id }}">
+                                        <i class="icon-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="cart-actions-bar">
+                        <div class="actions-left">
+                            <a href="/products" class="btn btn-outline">
+                                <i class="icon-arrow-right"></i>
+                                مواصلة التسوق
+                            </a>
+                        </div>
+                        
+                        <div class="actions-right">
+                            <button type="submit" class="btn btn-text">تحديث السلة</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            {# Cart Sidebar #}
+            <aside class="cart-sidebar">
+                <div class="cart-summary-box">
+                    <h3>ملخص الطلب</h3>
+                    
+                    <div class="summary-content">
+                        <div class="summary-row">
+                            <span>المجموع الفرعي ({{ cart.items_count }} منتج)</span>
+                            <span>{{ cart.subtotal|money }}</span>
+                        </div>
+                        
+                        {% if cart.discount > 0 %}
+                        <div class="summary-row discount">
+                            <span>الخصم</span>
+                            <span>-{{ cart.discount|money }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="summary-row">
+                            <span>الشحن</span>
+                            <span>{{ cart.shipping > 0 ? cart.shipping|money : 'مجاني' }}</span>
+                        </div>
+                        
+                        {% if cart.tax > 0 %}
+                        <div class="summary-row">
+                            <span>الضريبة</span>
+                            <span>{{ cart.tax|money }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="summary-row total">
+                            <span>الإجمالي</span>
+                            <span class="total-amount">{{ cart.total|money }}</span>
+                        </div>
+                    </div>
+                    
+                    <a href="/checkout" class="btn btn-primary btn-lg btn-block">إتمام الطلب</a>
+                    
+                    <div class="payment-methods">
+                        <span>طرق الدفع المتاحة:</span>
+                        <div class="payment-icons">
+                            <i class="icon-visa"></i>
+                            <i class="icon-mastercard"></i>
+                            <i class="icon-mada"></i>
+                            <i class="icon-apple-pay"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                {# Promo Code #}
+                <div class="promo-code-box">
+                    <h4>كود الخصم</h4>
+                    
+                    <form action="/cart/discount" method="POST" data-form="promo-code">
+                        <div class="form-group">
+                            <input type="text" name="code" class="form-control" placeholder="أدخل كود الخصم">
+                            
+                            <button type="submit" class="btn btn-outline">تطبيق</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </div>
+        
+        {% else %}
+        
+        {# Empty Cart Page #}
+        <div class="cart-empty-page">
+            <div class="empty-icon">
+                <i class="icon-shopping-bag"></i>
+            </div>
+            
+            <h2>سلة التسوق فارغة</h2>
+            
+            <p>لم تضف أي منتجات إلى سلة التسوق بعد. اكتشف تشكيلتنا الفاخرة من المجوهرات وابدأ التسوق الآن.</p>
+            
+            <a href="/products" class="btn btn-primary btn-lg">تصفح المنتجات</a>
+            
+            <div class="featured-categories">
+                <h3>تصفح أقسامنا</h3>
+                
+                <div class="categories-grid">
+                    {% for category in categories|slice(0, 4) %}
+                    <a href="{{ category.url }}" class="category-card">
+                        <img src="{{ category.image }}" alt="{{ category.name }}" loading="lazy">
+                        <span>{{ category.name }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
+
+{% endif %}
