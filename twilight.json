@@ -1,21 +1,41 @@
 {
-  "name": {
-    "ar": "شذن",
-    "en": "Shadan"
-  },
-  "description": {
-    "ar": "ثيم فاخر للمجوهرات مستوحى من تصميم Luluoro",
-    "en": "Premium jewelry theme inspired by Luluoro design"
-  },
-  "author": "Shadan Design Studio",
-  "author_email": "support@shadan.com",
-  "version": "1.0.0",
-  "repository": "https://github.com/yaqoot4zain-del/shadantheme",
-  "features": [
-    "fonts",
-    "color",
-    "breadcrumb",
-    "cart-drawer",
-    "rtl-support"
-  ]
+    "name": {
+        "ar": "شذن",
+        "en": "Shadan"
+    },
+    "repository": "https://github.com/yaqoot4zain-del/shadantheme",
+    "author_email": "support@shadan.com",
+    "features": [
+        "fonts",
+        "color",
+        "breadcrumb",
+        "unite-cards-height",
+        "component-featured-products",
+        "component-fixed-banner",
+        "component-products-slider",
+        "filters"
+    ],
+    "settings": [
+        {
+            "id": "primary_color",
+            "type": "color",
+            "format": "color-picker",
+            "label": "اللون الأساسي",
+            "value": "#1A1A1A"
+        },
+        {
+            "id": "accent_color",
+            "type": "color",
+            "format": "color-picker",
+            "label": "لون التمييز",
+            "value": "#C9A962"
+        },
+        {
+            "id": "header_is_sticky",
+            "type": "boolean",
+            "format": "switch",
+            "label": "تثبت القائمة الرئيسية أعلى الصفحة",
+            "value": true
+        }
+    ]
 }
